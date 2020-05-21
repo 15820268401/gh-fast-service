@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>客户信息列表</title>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
+    <link rel="stylesheet" href="../../css/bootstrap.min.css">
+    <link rel="stylesheet" href="../../css/font-awesome.min.css">
+    <link rel="stylesheet" href="../../plugins/jqgrid/ui.jqgrid-bootstrap.css">
+    <link rel="stylesheet" href="../../plugins/ztree/css/metroStyle/metroStyle.css">
+    <link rel="stylesheet" href="../../css/main.css">
+    <script src="../../libs/jquery.min.js"></script>
+    <script src="../../plugins/layer/layer.js"></script>
+    <script src="../../libs/bootstrap.min.js"></script>
+    <script src="../../libs/vue.min.js"></script>
+    <script src="../../libs/validator.min.js"></script>
+    <script src="../../plugins/jqgrid/grid.locale-cn.js"></script>
+    <script src="../../plugins/jqgrid/jquery.jqGrid.min.js"></script>
+    <script src="../../plugins/ztree/jquery.ztree.all.min.js"></script>
+    <script src="../../js/common.js"></script>
+
+    <style type="text/css">
+        input[type="text"] {
+            display: inherit;
+            width: 150px;
+            height: 34px;
+            padding: 6px 12px;
+            font-size: 14px;
+            line-height: 1.42857143;
+            color: #555;
+            background-color: #fff;
+            background-image: none;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075);
+            box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075);
+            -webkit-transition: border-color ease-in-out .15s, -webkit-box-shadow ease-in-out .15s;
+            -o-transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
+            transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
+        }
+    </style>
+</head>
+<body>
+<div id="rrapp" v-cloak>
+    <div v-show="showList">
+        <div class="grid-btn">
+            <div class="form-group">
+                <div class="col-sm-2" style="width: 100px;padding-top: 5px">
+                    筛选条件：
+                </div>
+                <div class="col-sm-2">
+                    <input type="text" class="form-control" style="display: block;width: 100%;" v-model="q.aliasname"
+                           @keyup.enter="query" placeholder="用户名">
+                </div>
+                <!--<div class="col-sm-2">
+                    <input type="text" class="form-control" style="display: block;width: 100%;" v-model="q.phone"
+                           @keyup.enter="query" placeholder="手机号">
+                </div>-->
+            </div>
+            <a class="btn btn-default" @click="query">查询</a>
+            <a class="btn btn-default" @click="resetQuery">重置</a>
+
+            <br/>
+            <br/>
+
+            <a v-if="hasPermission('customer:user:save')" class="btn btn-primary" @click="add"><i
+                    class="fa fa-plus"></i>&nbsp;新增</a>
+            <!--<a v-if="hasPermission('customer:user:update')" class="btn btn-primary" @click="update"><i-->
+                    <!--class="fa fa-pencil-square-o"></i>&nbsp;修改</a>-->
+            <a v-if="hasPermission('customer:user:delete')" class="btn btn-primary" @click="del"><i
+                    class="fa fa-trash-o"></i>&nbsp;删除</a>
+            <a v-if="hasPermission('customer:user:uploadData')" class="btn btn-primary" @click="uploadData"><i
+                    class="fa fa-arrow-up"></i>&nbsp;上传数据</a>
+        </div>
+        <table id="jqGrid"></table>
+        <div id="jqGridPager"></div>
+    </div>
+
+    <div v-show="!showList" class="panel panel-default">
+        <div class="panel-heading">{{title}}</div>
+        <form class="form-horizontal" style="width: 100%">
+            <table class="table table-bordered" style="width: 960px;font-weight: bold;">
+                <tbody>
+                <tr>
+                    <td colspan="2">
+                        日期：<input type="date" class="form-control" style="display: inherit;width: 150px;"
+                                  name="dateTime" v-model="customer.dateTime"
+                                  placeholder="日期"/>
+                        &nbsp;&nbsp;&nbsp;&nbsp;
+                        姓名：<input type="text" class="form-control" name="aliasname" v-model="customer.aliasname"
+                                  placeholder="姓名"/>
+                        &nbsp;&nbsp;&nbsp;&nbsp;
+                        身份证：<input type="text" class="form-control" name="idcard" v-model="customer.idcard"
+                                   placeholder="身份证"/>
+                        &nbsp;&nbsp;&nbsp;&nbsp;
+                        电&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;话：<input type="text" class="form-control"
+                                                                                  name="phone" v-model="customer.phone"
+                                                                                  placeholder="电话"/>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="2">
+                        金额：<input type="text" name="money" v-model="customer.money" placeholder="金额"/>
+                        &nbsp;&nbsp;&nbsp;&nbsp;
+                        用途：<input type="text" name="purpose" v-model="customer.purpose" placeholder="用途"/>
+                        &nbsp;&nbsp;&nbsp;&nbsp;
+                        期&nbsp;&nbsp;&nbsp;&nbsp;限：<input type="text" name="deadline" v-model="customer.deadline"
+                                                          placeholder="期限"/>
+                        &nbsp;&nbsp;&nbsp;&nbsp;
+                        需求时间：<input type="date" class="form-control" style="display: inherit;width: 150px;"
+                                    name="requiredTime" v-model="customer.requiredTime"
+                                    placeholder="需求时间"/>
+                    </td>
+                </tr>
+                <tr>
+                    <td rowspan="3" style="text-align: center;vertical-align: middle">
+                        <label>工薪</label>
+                    </td>
+                    <td>
+                        <label>单位：</label>
+                        <label>事业&nbsp;<input type="radio" class="" name="unit" v-model="customer.unit"
+                                              value="事业"/></label>
+                        <label>国企&nbsp;<input type="radio" class="" name="unit" v-model="customer.unit"
+                                              value="国企"/></label>
+                        <label>普通&nbsp;<input type="radio" class="" name="unit" v-model="customer.unit"
+                                              value="普通"/></label>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        <label>月收入：￥</label><input type="number" class="form-control"
+                                                   style="display: inherit;width: 150px;"
+                                                   name="monthlyIncome" v-model="customer.monthlyIncome"/>元
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        <label>发放形式：</label>
+                        <label>刷卡&nbsp;<input type="radio" class="" name="issueForm" v-model="customer.issueForm"
+                                              value="刷卡"/></label>
+                        <label>现金&nbsp;<input type="radio" class="" name="issueForm" v-model="customer.issueForm"
+                                              value="现金"/></label>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        单位名称：<input type="text" class="" name="unitName" v-model="customer.unitName"/>
+                        &nbsp;&nbsp;&nbsp;&nbsp;
+                        职务：<input type="text" class="" name="duty" v-model="customer.duty"/>
+                        &nbsp;&nbsp;&nbsp;&nbsp;
+                        工作时间：<input type="date" class="form-control" style="display: inherit;width: 150px;"
+                                    name="workHours" v-model="customer.workHours"/>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        社保：
+                        <label>有&nbsp;<input type="radio" class="" name="socialSecurity"
+                                             v-model="customer.socialSecurity" value="有"/></label>&nbsp;&nbsp;
+                        <label>无&nbsp;<input type="radio" class="" name="socialSecurity"
+                                             v-model="customer.socialSecurity" value="无"/></label>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        公职金：
+                        <label>有&nbsp;<input type="radio" class="" name="publicGold" v-model="customer.publicGold"
+                                             value="有"/></label>&nbsp;&nbsp;
+                        <label>无&nbsp;<input type="radio" class="" name="publicGold" v-model="customer.publicGold"
+                                             value="无"/></label>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        基数：<input type="text" class="" name="cardinalNumber" v-model="customer.cardinalNumber"/>
+                    </td>
+                </tr>
+                <tr>
+                    <td rowspan="2" style="text-align: center;vertical-align: middle">
+                        生意
+                    </td>
+                    <td>
+                        <label>公司&nbsp;<input type="radio" class="" name="business" v-model="customer.business"
+                                              value="公司"/></label>&nbsp;&nbsp;
+                        <label>个体&nbsp;<input type="radio" class="" name="business" v-model="customer.business"
+                                              value="个体"/></label>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        是否法人：
+                        <label>是&nbsp;<input type="radio" class="" name="legalPerson" v-model="customer.legalPerson"
+                                             value="是"/></label>&nbsp;&nbsp;
+                        <label>否&nbsp;<input type="radio" class="" name="legalPerson" v-model="customer.legalPerson"
+                                             value="否"/></label>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        经营时间（以工商注册时间为准）：<input type="date" class="form-control" style="display: inherit;width: 150px;"
+                                               name="operationTime" v-model="customer.operationTime"/>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        流水情况：<input type="text" class="" name="waterSituation" v-model="customer.waterSituation"/>
+                    </td>
+                </tr>
+                <tr>
+                    <td rowspan="2" style="text-align: center;vertical-align: middle">
+                        个人信用情况
+                    </td>
+                    <td>
+                        学历：<input type="text" class="" style="width: 100px;" name="education"
+                                  v-model="customer.education"/>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        芝麻分：<input type="text" class="" style="width: 100px;" name="sesamePoints"
+                                   v-model="customer.sesamePoints"/>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        信用卡：
+                        <label>有&nbsp;<input type="radio" class="" name="creditCard" v-model="customer.creditCard"
+                                             value="有"/></label>
+                        &nbsp;&nbsp;
+                        <label>无&nbsp;<input type="radio" class="" name="creditCard" v-model="customer.creditCard"
+                                             value="无"/></label>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        单张信用卡最高额度：<input type="text" class="" style="width: 100px;" name="creditLimit"
+                                         v-model="customer.creditLimit"/>元
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        征信：逾期
+                        <label>有&nbsp;<input type="radio" class="" name="credit" v-model="customer.credit"
+                                             value="有"/></label>&nbsp;&nbsp;
+                        <label>无&nbsp;<input type="radio" class="" name="credit" v-model="customer.credit"
+                                             value="无"/></label>&nbsp;&nbsp;
+                        <label>白户&nbsp;<input type="radio" class="" name="credit" v-model="customer.credit"
+                                              value="白户"/></label>
+                    </td>
+                </tr>
+                <tr>
+                    <td rowspan="3" style="text-align: center;vertical-align: middle">
+                        贷款情况
+                    </td>
+                    <td>
+                        银行贷款：&nbsp;&nbsp;
+                        <label>无&nbsp;<input type="radio" class="" name="bankLoan" v-model="customer.bankLoan"
+                                             value="无"/></label>
+                        &nbsp;&nbsp;
+                        <label>有&nbsp;<input type="radio" class="" name="bankLoan" v-model="customer.bankLoan"
+                                             value="有"/></label>
+                        &nbsp;&nbsp;&nbsp;&nbsp;
+                        总额度：共<!--<input type="text" class="" name="bankLoanTotalAmount"/>-->
+                        <input type="number" min="0" max="600" class="" name="bankLoanQi"
+                               v-model="customer.bankLoanQi"/>期
+                        &nbsp;&nbsp;&nbsp;&nbsp;
+                        月还款：￥<input type="number" min="0" max="99999999" class="" name="bankLoanMonthlyPayments"
+                                    v-model="customer.bankLoanMonthlyPayments"/>元
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        芝&nbsp;&nbsp;麻&nbsp;&nbsp;贷：&nbsp;&nbsp;
+                        <label>无&nbsp;<input type="radio" class="" name="sesameLoan" v-model="customer.sesameLoan"
+                                             value="无"/></label>
+                        &nbsp;&nbsp;
+                        <label>有&nbsp;<input type="radio" class="" name="sesameLoan" v-model="customer.sesameLoan"
+                                             value="有"/></label>
+                        &nbsp;&nbsp;&nbsp;&nbsp;
+                        总额度：共<!--<input type="text" class="" name="sesameLoanTotalAmount"/>-->
+                        <input type="number" min="0" max="600" class="" name="sesameLoanQi"
+                               v-model="customer.sesameLoanQi"/>期
+                        &nbsp;&nbsp;&nbsp;&nbsp;
+                        月还款：￥<input type="number" min="0" max="99999999" class="" name="sesameLoanMonthlyPayments"
+                                    v-model="customer.sesameLoanMonthlyPayments"/>元
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        微&nbsp;&nbsp;粒&nbsp;&nbsp;贷：&nbsp;&nbsp;
+                        <label>无&nbsp;<input type="radio" class="" name="atomLoan" v-model="customer.atomLoan"
+                                             value="无"/></label>
+                        &nbsp;&nbsp;
+                        <label>有&nbsp;<input type="radio" class="" name="atomLoan" v-model="customer.atomLoan"
+                                             value="有"/></label>
+                        &nbsp;&nbsp;&nbsp;&nbsp;
+                        总额度：共<!--<input type="text" class="" name="atomLoanTotalAmount"/>-->
+                        <input type="number" min="0" max="600" class="" name="atomLoanQi"
+                               v-model="customer.atomLoanQi"/>期
+                        &nbsp;&nbsp;&nbsp;&nbsp;
+                        月还款：￥<input type="number" min="0" max="99999999" class="" name="atomLoanMonthlyPayments"
+                                    v-model="customer.atomLoanMonthlyPayments"/>元
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="2">
+                        保单情况：<input type="text" class="" style="width: 100px;" name="policyCircumstances"
+                                    v-model="customer.policyCircumstances"/>
+                        &nbsp;&nbsp;&nbsp;&nbsp;
+                        保险公司：<input type="text" class="" style="width: 100px;" name="insuranceCompany"
+                                    v-model="customer.insuranceCompany"/>
+                        &nbsp;&nbsp;&nbsp;&nbsp;
+                        年缴额度￥ <input type="text" class="" style="width: 100px;" name="payAmount"
+                                     v-model="customer.payAmount"/>元
+                        &nbsp;&nbsp;&nbsp;&nbsp;
+                        已缴<input type="text" class="" style="width: 100px;" name="paidIn" v-model="customer.paidIn"/>年
+                        &nbsp;&nbsp;&nbsp;&nbsp;
+                        其他：<input type="text" class="" style="width: 100px;" name="other" v-model="customer.other"/>
+                    </td>
+                </tr>
+                <tr>
+                    <td rowspan="2" style="text-align: center;vertical-align: middle">
+                        名下房产
+                    </td>
+                    <td>
+                        <label>无&nbsp;<input type="radio" class="" name="nameOfTheProperty"
+                                             v-model="customer.nameOfTheProperty" value="无"/></label>
+                        &nbsp;&nbsp;
+                        <label>有&nbsp;<input type="radio" class="" name="nameOfTheProperty"
+                                             v-model="customer.nameOfTheProperty" value="有"/></label>
+                        &nbsp;&nbsp;
+                        <label>小产权&nbsp;<input type="radio" class="" name="nameOfTheProperty"
+                                               v-model="customer.nameOfTheProperty"
+                                               value="小产权"/></label>
+                        &nbsp;&nbsp;
+                        <label>国有自建房&nbsp;<input type="radio" class="" name="nameOfTheProperty"
+                                                 v-model="customer.nameOfTheProperty"
+                                                 value="国有自建房"/></label>
+                        &nbsp;&nbsp;
+                        <label>宅基地自建房&nbsp;<input type="radio" class="" name="nameOfTheProperty"
+                                                  v-model="customer.nameOfTheProperty"
+                                                  value="宅基地自建房"/></label>
+                        &nbsp;&nbsp;&nbsp;&nbsp;
+                        面积：<input type="text" class="" name="area"/>m²
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <label>全款房&nbsp;<input type="radio" class="" name="nameOfTheProperty"
+                                               v-model="customer.nameOfTheProperty"
+                                               value="全款房"/></label>
+                        &nbsp;&nbsp;
+                        <label>贷款房&nbsp;<input type="radio" class="" name="nameOfTheProperty"
+                                               v-model="customer.nameOfTheProperty"
+                                               value="贷款房"/></label>
+                        &nbsp;&nbsp;&nbsp;&nbsp;
+                        贷款期限：<input type="text" class="" style="width: 100px;" name="loansDeadline"
+                                    v-model="customer.loansDeadline"/>
+                        &nbsp;&nbsp;&nbsp;&nbsp;
+                        每月还款：￥<input type="number" min="0" max="99999999" class="" name="housesPayMoneyForMonth"
+                                     v-model="customer.housesPayMoneyForMonth"/>元
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="2">
+                        名下车辆：
+                        <label>无&nbsp;<input type="radio" class="" name="nameOfTheCar" v-model="customer.nameOfTheCar"
+                                             value="无"/></label>
+                        &nbsp;&nbsp;
+                        <label>有&nbsp;<input type="radio" class="" name="nameOfTheCar" v-model="customer.nameOfTheCar"
+                                             value="有"/></label>
+                        &nbsp;&nbsp;&nbsp;&nbsp;
+                        车价值 <input type="number" min="0" max="99999999" class="" name="carMoney"
+                                   v-model="customer.carMoney"/>万
+                        &nbsp;&nbsp;
+                        <label>全款&nbsp;<input type="radio" class="" name="carPayType" v-model="customer.carPayType"
+                                              value="全款"/></label>
+                        &nbsp;&nbsp;
+                        <label>贷款&nbsp;<input type="radio" class="" name="carPayType" v-model="customer.carPayType"
+                                              value="贷款"/></label>
+                        &nbsp;&nbsp;&nbsp;&nbsp;
+                        月还款：￥<input type="number" min="0" max="99999999" class="" name="carPayMoneyForMonth"
+                                    v-model="customer.carPayMoneyForMonth"/>元
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="2">
+                        婚姻情况：&nbsp;&nbsp;
+                        <label>未婚&nbsp;<input type="radio" class="" name="maritalStatus"
+                                              v-model="customer.maritalStatus" value="未婚"/></label>
+                        &nbsp;&nbsp;
+                        <label>已婚&nbsp;<input type="radio" class="" name="maritalStatus"
+                                              v-model="customer.maritalStatus" value="已婚"/></label>
+                        &nbsp;&nbsp;
+                        <label>离异&nbsp;<input type="radio" class="" name="maritalStatus"
+                                              v-model="customer.maritalStatus" value="离异"/></label>
+                        &nbsp;&nbsp;&nbsp;&nbsp;
+                        家人是否知情：&nbsp;&nbsp;
+                        <label>否&nbsp;<input type="radio" class="" name="familyKnow" v-model="customer.familyKnow"
+                                             value="否"/></label>
+                        &nbsp;&nbsp;
+                        <label>是&nbsp;<input type="radio" class="" name="familyKnow" v-model="customer.familyKnow"
+                                             value="是"/></label>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="2">
+                        客户等级：
+                        <label>★★★★&nbsp;<input type="radio" class="" name="clientGrade" v-model="customer.clientGrade"
+                                                value="4"/></label>
+                        &nbsp;&nbsp;
+                        <label>★★★&nbsp;<input type="radio" class="" name="clientGrade" v-model="customer.clientGrade"
+                                               value="3"/></label>
+                        &nbsp;&nbsp;
+                        <label>★★&nbsp;<input type="radio" class="" name="clientGrade" v-model="customer.clientGrade"
+                                              value="2"/></label>
+                        &nbsp;&nbsp;
+                        <label>★&nbsp;<input type="radio" class="" name="clientGrade" v-model="customer.clientGrade"
+                                             value="1"/></label>
+                        &nbsp;&nbsp;
+                        <label>无星&nbsp;<input type="radio" class="" name="clientGrade" v-model="customer.clientGrade"
+                                             value="0"/></label>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="2">
+                        客户情况:<!--<input type="text" class="form-control" style="width: 100%" name="reviewSituation"/>-->
+                        <textarea rows="4" name="reviewSituation" v-model="customer.reviewSituation" cols="100%"
+                                  class="form-control"
+                                  onpropertychange="this.style.posHeight=this.scrollHeight"></textarea>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="2" style="text-align: center">
+                        <div class="form-group">
+                            <div class="col-sm-2 control-label"></div>
+                            <input type="button" class="btn btn-primary" @click="saveOrUpdate" value="确定"/>
+                            &nbsp;&nbsp;<input type="button" class="btn btn-warning" @click="reload" value="返回"/>
+                            &nbsp;&nbsp;<input type="reset" class="btn btn-danger" value="重置"/>
+                        </div>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </form>
+    </div>
+
+</div>
+
+<script src="../../js/modules/customer/customer.js"></script>
+</body>
+</html>

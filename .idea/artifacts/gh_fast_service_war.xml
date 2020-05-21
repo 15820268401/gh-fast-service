@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="war" name="gh-fast-service:war">
+    <output-path>$PROJECT_DIR$/target</output-path>
+    <root id="archive" name="gh-fast-service.war">
+      <element id="artifact" artifact-name="gh-fast-service:war exploded" />
+    </root>
+  </artifact>
+</component>

@@ -1,0 +1,735 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="io.gh.modules.customer.dao.CustomerDao">
+    <resultMap id="BaseResultMap" type="io.gh.modules.customer.entity.CustomerEntity">
+        <id column="id" jdbcType="BIGINT" property="id"/>
+        <result column="del" jdbcType="BIT" property="del"/>
+        <result column="creater_time" jdbcType="TIMESTAMP" property="createrTime"/>
+        <result column="update_time" jdbcType="TIMESTAMP" property="updateTime"/>
+        <result column="upload_user" jdbcType="VARCHAR" property="uploadUser"/>
+        <result column="upload_time" jdbcType="TIMESTAMP" property="uploadTime"/>
+        <result column="download_user" jdbcType="VARCHAR" property="downloadUser"/>
+        <result column="download_time" jdbcType="TIMESTAMP" property="downloadTime"/>
+        <result column="date_time" jdbcType="VARCHAR" property="dateTime"/>
+        <result column="aliasname" jdbcType="VARCHAR" property="aliasname"/>
+        <result column="idcard" jdbcType="VARCHAR" property="idcard"/>
+        <result column="phone" jdbcType="VARCHAR" property="phone"/>
+        <result column="money" jdbcType="VARCHAR" property="money"/>
+        <result column="purpose" jdbcType="VARCHAR" property="purpose"/>
+        <result column="deadline" jdbcType="VARCHAR" property="deadline"/>
+        <result column="required_time" jdbcType="VARCHAR" property="requiredTime"/>
+        <result column="unit" jdbcType="VARCHAR" property="unit"/>
+        <result column="monthly_income" jdbcType="VARCHAR" property="monthlyIncome"/>
+        <result column="issue_form" jdbcType="VARCHAR" property="issueForm"/>
+        <result column="unit_name" jdbcType="VARCHAR" property="unitName"/>
+        <result column="duty" jdbcType="VARCHAR" property="duty"/>
+        <result column="work_hours" jdbcType="VARCHAR" property="workHours"/>
+        <result column="social_security" jdbcType="VARCHAR" property="socialSecurity"/>
+        <result column="public_gold" jdbcType="VARCHAR" property="publicGold"/>
+        <result column="cardinal_number" jdbcType="VARCHAR" property="cardinalNumber"/>
+        <result column="business" jdbcType="VARCHAR" property="business"/>
+        <result column="legal_person" jdbcType="VARCHAR" property="legalPerson"/>
+        <result column="operation_time" jdbcType="VARCHAR" property="operationTime"/>
+        <result column="water_situation" jdbcType="VARCHAR" property="waterSituation"/>
+        <result column="education" jdbcType="VARCHAR" property="education"/>
+        <result column="sesame_points" jdbcType="VARCHAR" property="sesamePoints"/>
+        <result column="credit_card" jdbcType="VARCHAR" property="creditCard"/>
+        <result column="credit_limit" jdbcType="VARCHAR" property="creditLimit"/>
+        <result column="credit" jdbcType="VARCHAR" property="credit"/>
+        <result column="bank_loan" jdbcType="VARCHAR" property="bankLoan"/>
+        <result column="bank_loan_qi" jdbcType="VARCHAR" property="bankLoanQi"/>
+        <result column="bank_loan_monthly_payments" jdbcType="VARCHAR" property="bankLoanMonthlyPayments"/>
+        <result column="sesame_loan" jdbcType="VARCHAR" property="sesameLoan"/>
+        <result column="sesame_loan_qi" jdbcType="VARCHAR" property="sesameLoanQi"/>
+        <result column="sesame_loan_monthly_payments" jdbcType="VARCHAR" property="sesameLoanMonthlyPayments"/>
+        <result column="atom_loan" jdbcType="VARCHAR" property="atomLoan"/>
+        <result column="atom_loan_qi" jdbcType="VARCHAR" property="atomLoanQi"/>
+        <result column="atom_loan_monthly_payments" jdbcType="VARCHAR" property="atomLoanMonthlyPayments"/>
+        <result column="policy_circumstances" jdbcType="VARCHAR" property="policyCircumstances"/>
+        <result column="insurance_company" jdbcType="VARCHAR" property="insuranceCompany"/>
+        <result column="pay_amount" jdbcType="VARCHAR" property="payAmount"/>
+        <result column="paid_in" jdbcType="VARCHAR" property="paidIn"/>
+        <result column="other" jdbcType="VARCHAR" property="other"/>
+        <result column="name_of_the_property" jdbcType="VARCHAR" property="nameOfTheProperty"/>
+        <result column="area" jdbcType="VARCHAR" property="area"/>
+        <result column="loans_deadline" jdbcType="VARCHAR" property="loansDeadline"/>
+        <result column="houses_pay_money_for_month" jdbcType="VARCHAR" property="housesPayMoneyForMonth"/>
+        <result column="name_of_the_car" jdbcType="VARCHAR" property="nameOfTheCar"/>
+        <result column="car_money" jdbcType="VARCHAR" property="carMoney"/>
+        <result column="car_pay_type" jdbcType="VARCHAR" property="carPayType"/>
+        <result column="car_pay_money_for_month" jdbcType="VARCHAR" property="carPayMoneyForMonth"/>
+        <result column="marital_status" jdbcType="VARCHAR" property="maritalStatus"/>
+        <result column="family_know" jdbcType="VARCHAR" property="familyKnow"/>
+        <result column="client_grade" jdbcType="VARCHAR" property="clientGrade"/>
+        <result column="review_situation" jdbcType="VARCHAR" property="reviewSituation"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+        id, del, creater_time, update_time, upload_user, upload_time, download_user, download_time, date_time, aliasname,
+        idcard, phone, money, purpose, deadline, required_time, unit, monthly_income, issue_form,
+        unit_name, duty, work_hours, social_security, public_gold, cardinal_number, business,
+        legal_person, operation_time, water_situation, education, sesame_points, credit_card,
+        credit_limit, credit, bank_loan, bank_loan_qi, bank_loan_monthly_payments, sesame_loan,
+        sesame_loan_qi, sesame_loan_monthly_payments, atom_loan, atom_loan_qi, atom_loan_monthly_payments,
+        policy_circumstances, insurance_company, pay_amount, paid_in, other, name_of_the_property,
+        area, loans_deadline, houses_pay_money_for_month, name_of_the_car, car_money, car_pay_type,
+        car_pay_money_for_month, marital_status, family_know, client_grade, review_situation
+    </sql>
+    <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from tb_customer
+        where id = #{id,jdbcType=BIGINT} AND `del`=0
+    </select>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+        UPDATE tb_customer SET `del`=1
+        where id = #{id,jdbcType=BIGINT}
+    </delete>
+    <insert id="insert" parameterType="io.gh.modules.customer.entity.CustomerEntity" useGeneratedKeys="true"
+            keyProperty="id">
+        insert into tb_customer (creater_time,
+        update_time, upload_user, upload_time, download_user, download_time,
+        date_time, aliasname, idcard,
+        phone, money, purpose,
+        deadline, required_time, unit,
+        monthly_income, issue_form, unit_name,
+        duty, work_hours, social_security,
+        public_gold, cardinal_number, business,
+        legal_person, operation_time, water_situation,
+        education, sesame_points, credit_card,
+        credit_limit, credit, bank_loan,
+        bank_loan_qi, bank_loan_monthly_payments, sesame_loan,
+        sesame_loan_qi, sesame_loan_monthly_payments,
+        atom_loan, atom_loan_qi, atom_loan_monthly_payments,
+        policy_circumstances, insurance_company,
+        pay_amount, paid_in, other,
+        name_of_the_property, area, loans_deadline,
+        houses_pay_money_for_month, name_of_the_car, car_money,
+        car_pay_type, car_pay_money_for_month, marital_status,
+        family_know, client_grade, review_situation
+        )
+        values (#{createrTime,jdbcType=TIMESTAMP},
+        #{updateTime,jdbcType=TIMESTAMP}, #{uploadUser,jdbcType=VARCHAR}, #{uploadTime,jdbcType=TIMESTAMP},
+        #{downloadUser,jdbcType=VARCHAR}, #{downloadTime,jdbcType=TIMESTAMP},
+        #{dateTime,jdbcType=VARCHAR}, #{aliasname,jdbcType=VARCHAR}, #{idcard,jdbcType=VARCHAR},
+        #{phone,jdbcType=VARCHAR}, #{money,jdbcType=VARCHAR}, #{purpose,jdbcType=VARCHAR},
+        #{deadline,jdbcType=VARCHAR}, #{requiredTime,jdbcType=VARCHAR}, #{unit,jdbcType=VARCHAR},
+        #{monthlyIncome,jdbcType=VARCHAR}, #{issueForm,jdbcType=VARCHAR}, #{unitName,jdbcType=VARCHAR},
+        #{duty,jdbcType=VARCHAR}, #{workHours,jdbcType=VARCHAR}, #{socialSecurity,jdbcType=VARCHAR},
+        #{publicGold,jdbcType=VARCHAR}, #{cardinalNumber,jdbcType=VARCHAR}, #{business,jdbcType=VARCHAR},
+        #{legalPerson,jdbcType=VARCHAR}, #{operationTime,jdbcType=VARCHAR}, #{waterSituation,jdbcType=VARCHAR},
+        #{education,jdbcType=VARCHAR}, #{sesamePoints,jdbcType=VARCHAR}, #{creditCard,jdbcType=VARCHAR},
+        #{creditLimit,jdbcType=VARCHAR}, #{credit,jdbcType=VARCHAR}, #{bankLoan,jdbcType=VARCHAR},
+        #{bankLoanQi,jdbcType=VARCHAR}, #{bankLoanMonthlyPayments,jdbcType=VARCHAR}, #{sesameLoan,jdbcType=VARCHAR},
+        #{sesameLoanQi,jdbcType=VARCHAR}, #{sesameLoanMonthlyPayments,jdbcType=VARCHAR},
+        #{atomLoan,jdbcType=VARCHAR}, #{atomLoanQi,jdbcType=VARCHAR}, #{atomLoanMonthlyPayments,jdbcType=VARCHAR},
+        #{policyCircumstances,jdbcType=VARCHAR}, #{insuranceCompany,jdbcType=VARCHAR},
+        #{payAmount,jdbcType=VARCHAR}, #{paidIn,jdbcType=VARCHAR}, #{other,jdbcType=VARCHAR},
+        #{nameOfTheProperty,jdbcType=VARCHAR}, #{area,jdbcType=VARCHAR}, #{loansDeadline,jdbcType=VARCHAR},
+        #{housesPayMoneyForMonth,jdbcType=VARCHAR}, #{nameOfTheCar,jdbcType=VARCHAR}, #{carMoney,jdbcType=VARCHAR},
+        #{carPayType,jdbcType=VARCHAR}, #{carPayMoneyForMonth,jdbcType=VARCHAR}, #{maritalStatus,jdbcType=VARCHAR},
+        #{familyKnow,jdbcType=VARCHAR}, #{clientGrade,jdbcType=VARCHAR}, #{reviewSituation,jdbcType=VARCHAR}
+        )
+    </insert>
+    <insert id="insertSelective" parameterType="io.gh.modules.customer.entity.CustomerEntity" useGeneratedKeys="true"
+            keyProperty="id">
+        insert into tb_customer
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="createrTime != null">
+                creater_time,
+            </if>
+            <if test="updateTime != null">
+                update_time,
+            </if>
+            <if test="uploadUser != null">
+                upload_user,
+            </if>
+            <if test="uploadTime != null">
+                upload_time,
+            </if>
+            <if test="downloadUser != null">
+                download_user,
+            </if>
+            <if test="downloadTime != null">
+                download_time,
+            </if>
+            <if test="dateTime != null">
+                date_time,
+            </if>
+            <if test="aliasname != null">
+                aliasname,
+            </if>
+            <if test="idcard != null">
+                idcard,
+            </if>
+            <if test="phone != null">
+                phone,
+            </if>
+            <if test="money != null">
+                money,
+            </if>
+            <if test="purpose != null">
+                purpose,
+            </if>
+            <if test="deadline != null">
+                deadline,
+            </if>
+            <if test="requiredTime != null">
+                required_time,
+            </if>
+            <if test="unit != null">
+                unit,
+            </if>
+            <if test="monthlyIncome != null">
+                monthly_income,
+            </if>
+            <if test="issueForm != null">
+                issue_form,
+            </if>
+            <if test="unitName != null">
+                unit_name,
+            </if>
+            <if test="duty != null">
+                duty,
+            </if>
+            <if test="workHours != null">
+                work_hours,
+            </if>
+            <if test="socialSecurity != null">
+                social_security,
+            </if>
+            <if test="publicGold != null">
+                public_gold,
+            </if>
+            <if test="cardinalNumber != null">
+                cardinal_number,
+            </if>
+            <if test="business != null">
+                business,
+            </if>
+            <if test="legalPerson != null">
+                legal_person,
+            </if>
+            <if test="operationTime != null">
+                operation_time,
+            </if>
+            <if test="waterSituation != null">
+                water_situation,
+            </if>
+            <if test="education != null">
+                education,
+            </if>
+            <if test="sesamePoints != null">
+                sesame_points,
+            </if>
+            <if test="creditCard != null">
+                credit_card,
+            </if>
+            <if test="creditLimit != null">
+                credit_limit,
+            </if>
+            <if test="credit != null">
+                credit,
+            </if>
+            <if test="bankLoan != null">
+                bank_loan,
+            </if>
+            <if test="bankLoanQi != null">
+                bank_loan_qi,
+            </if>
+            <if test="bankLoanMonthlyPayments != null">
+                bank_loan_monthly_payments,
+            </if>
+            <if test="sesameLoan != null">
+                sesame_loan,
+            </if>
+            <if test="sesameLoanQi != null">
+                sesame_loan_qi,
+            </if>
+            <if test="sesameLoanMonthlyPayments != null">
+                sesame_loan_monthly_payments,
+            </if>
+            <if test="atomLoan != null">
+                atom_loan,
+            </if>
+            <if test="atomLoanQi != null">
+                atom_loan_qi,
+            </if>
+            <if test="atomLoanMonthlyPayments != null">
+                atom_loan_monthly_payments,
+            </if>
+            <if test="policyCircumstances != null">
+                policy_circumstances,
+            </if>
+            <if test="insuranceCompany != null">
+                insurance_company,
+            </if>
+            <if test="payAmount != null">
+                pay_amount,
+            </if>
+            <if test="paidIn != null">
+                paid_in,
+            </if>
+            <if test="other != null">
+                other,
+            </if>
+            <if test="nameOfTheProperty != null">
+                name_of_the_property,
+            </if>
+            <if test="area != null">
+                area,
+            </if>
+            <if test="loansDeadline != null">
+                loans_deadline,
+            </if>
+            <if test="housesPayMoneyForMonth != null">
+                houses_pay_money_for_month,
+            </if>
+            <if test="nameOfTheCar != null">
+                name_of_the_car,
+            </if>
+            <if test="carMoney != null">
+                car_money,
+            </if>
+            <if test="carPayType != null">
+                car_pay_type,
+            </if>
+            <if test="carPayMoneyForMonth != null">
+                car_pay_money_for_month,
+            </if>
+            <if test="maritalStatus != null">
+                marital_status,
+            </if>
+            <if test="familyKnow != null">
+                family_know,
+            </if>
+            <if test="clientGrade != null">
+                client_grade,
+            </if>
+            <if test="reviewSituation != null">
+                review_situation,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="createrTime != null">
+                #{createrTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updateTime != null">
+                #{updateTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="uploadUser != null">
+                #{uploadUser,jdbcType=VARCHAR},
+            </if>
+            <if test="uploadTime != null">
+                #{uploadTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="downloadUser != null">
+                #{downloadUser,jdbcType=VARCHAR},
+            </if>
+            <if test="downloadTime != null">
+                #{downloadTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="dateTime != null">
+                #{dateTime,jdbcType=VARCHAR},
+            </if>
+            <if test="aliasname != null">
+                #{aliasname,jdbcType=VARCHAR},
+            </if>
+            <if test="idcard != null">
+                #{idcard,jdbcType=VARCHAR},
+            </if>
+            <if test="phone != null">
+                #{phone,jdbcType=VARCHAR},
+            </if>
+            <if test="money != null">
+                #{money,jdbcType=VARCHAR},
+            </if>
+            <if test="purpose != null">
+                #{purpose,jdbcType=VARCHAR},
+            </if>
+            <if test="deadline != null">
+                #{deadline,jdbcType=VARCHAR},
+            </if>
+            <if test="requiredTime != null">
+                #{requiredTime,jdbcType=VARCHAR},
+            </if>
+            <if test="unit != null">
+                #{unit,jdbcType=VARCHAR},
+            </if>
+            <if test="monthlyIncome != null">
+                #{monthlyIncome,jdbcType=VARCHAR},
+            </if>
+            <if test="issueForm != null">
+                #{issueForm,jdbcType=VARCHAR},
+            </if>
+            <if test="unitName != null">
+                #{unitName,jdbcType=VARCHAR},
+            </if>
+            <if test="duty != null">
+                #{duty,jdbcType=VARCHAR},
+            </if>
+            <if test="workHours != null">
+                #{workHours,jdbcType=VARCHAR},
+            </if>
+            <if test="socialSecurity != null">
+                #{socialSecurity,jdbcType=VARCHAR},
+            </if>
+            <if test="publicGold != null">
+                #{publicGold,jdbcType=VARCHAR},
+            </if>
+            <if test="cardinalNumber != null">
+                #{cardinalNumber,jdbcType=VARCHAR},
+            </if>
+            <if test="business != null">
+                #{business,jdbcType=VARCHAR},
+            </if>
+            <if test="legalPerson != null">
+                #{legalPerson,jdbcType=VARCHAR},
+            </if>
+            <if test="operationTime != null">
+                #{operationTime,jdbcType=VARCHAR},
+            </if>
+            <if test="waterSituation != null">
+                #{waterSituation,jdbcType=VARCHAR},
+            </if>
+            <if test="education != null">
+                #{education,jdbcType=VARCHAR},
+            </if>
+            <if test="sesamePoints != null">
+                #{sesamePoints,jdbcType=VARCHAR},
+            </if>
+            <if test="creditCard != null">
+                #{creditCard,jdbcType=VARCHAR},
+            </if>
+            <if test="creditLimit != null">
+                #{creditLimit,jdbcType=VARCHAR},
+            </if>
+            <if test="credit != null">
+                #{credit,jdbcType=VARCHAR},
+            </if>
+            <if test="bankLoan != null">
+                #{bankLoan,jdbcType=VARCHAR},
+            </if>
+            <if test="bankLoanQi != null">
+                #{bankLoanQi,jdbcType=VARCHAR},
+            </if>
+            <if test="bankLoanMonthlyPayments != null">
+                #{bankLoanMonthlyPayments,jdbcType=VARCHAR},
+            </if>
+            <if test="sesameLoan != null">
+                #{sesameLoan,jdbcType=VARCHAR},
+            </if>
+            <if test="sesameLoanQi != null">
+                #{sesameLoanQi,jdbcType=VARCHAR},
+            </if>
+            <if test="sesameLoanMonthlyPayments != null">
+                #{sesameLoanMonthlyPayments,jdbcType=VARCHAR},
+            </if>
+            <if test="atomLoan != null">
+                #{atomLoan,jdbcType=VARCHAR},
+            </if>
+            <if test="atomLoanQi != null">
+                #{atomLoanQi,jdbcType=VARCHAR},
+            </if>
+            <if test="atomLoanMonthlyPayments != null">
+                #{atomLoanMonthlyPayments,jdbcType=VARCHAR},
+            </if>
+            <if test="policyCircumstances != null">
+                #{policyCircumstances,jdbcType=VARCHAR},
+            </if>
+            <if test="insuranceCompany != null">
+                #{insuranceCompany,jdbcType=VARCHAR},
+            </if>
+            <if test="payAmount != null">
+                #{payAmount,jdbcType=VARCHAR},
+            </if>
+            <if test="paidIn != null">
+                #{paidIn,jdbcType=VARCHAR},
+            </if>
+            <if test="other != null">
+                #{other,jdbcType=VARCHAR},
+            </if>
+            <if test="nameOfTheProperty != null">
+                #{nameOfTheProperty,jdbcType=VARCHAR},
+            </if>
+            <if test="area != null">
+                #{area,jdbcType=VARCHAR},
+            </if>
+            <if test="loansDeadline != null">
+                #{loansDeadline,jdbcType=VARCHAR},
+            </if>
+            <if test="housesPayMoneyForMonth != null">
+                #{housesPayMoneyForMonth,jdbcType=VARCHAR},
+            </if>
+            <if test="nameOfTheCar != null">
+                #{nameOfTheCar,jdbcType=VARCHAR},
+            </if>
+            <if test="carMoney != null">
+                #{carMoney,jdbcType=VARCHAR},
+            </if>
+            <if test="carPayType != null">
+                #{carPayType,jdbcType=VARCHAR},
+            </if>
+            <if test="carPayMoneyForMonth != null">
+                #{carPayMoneyForMonth,jdbcType=VARCHAR},
+            </if>
+            <if test="maritalStatus != null">
+                #{maritalStatus,jdbcType=VARCHAR},
+            </if>
+            <if test="familyKnow != null">
+                #{familyKnow,jdbcType=VARCHAR},
+            </if>
+            <if test="clientGrade != null">
+                #{clientGrade,jdbcType=VARCHAR},
+            </if>
+            <if test="reviewSituation != null">
+                #{reviewSituation,jdbcType=VARCHAR},
+            </if>
+        </trim>
+    </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="io.gh.modules.customer.entity.CustomerEntity">
+        update tb_customer
+        <set>
+            <if test="del != null">
+                del = #{del,jdbcType=BIT},
+            </if>
+            <if test="createrTime != null">
+                creater_time = #{createrTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updateTime != null">
+                update_time = #{updateTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="uploadUser != null">
+                upload_user = #{uploadUser,jdbcType=VARCHAR},
+            </if>
+            <if test="uploadTime != null">
+                upload_time = #{uploadTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="downloadUser != null">
+                download_user = #{downloadUser,jdbcType=VARCHAR},
+            </if>
+            <if test="downloadTime != null">
+                download_time = #{downloadTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="dateTime != null">
+                date_time = #{dateTime,jdbcType=VARCHAR},
+            </if>
+            <if test="aliasname != null">
+                aliasname = #{aliasname,jdbcType=VARCHAR},
+            </if>
+            <if test="idcard != null">
+                idcard = #{idcard,jdbcType=VARCHAR},
+            </if>
+            <if test="phone != null">
+                phone = #{phone,jdbcType=VARCHAR},
+            </if>
+            <if test="money != null">
+                money = #{money,jdbcType=VARCHAR},
+            </if>
+            <if test="purpose != null">
+                purpose = #{purpose,jdbcType=VARCHAR},
+            </if>
+            <if test="deadline != null">
+                deadline = #{deadline,jdbcType=VARCHAR},
+            </if>
+            <if test="requiredTime != null">
+                required_time = #{requiredTime,jdbcType=VARCHAR},
+            </if>
+            <if test="unit != null">
+                unit = #{unit,jdbcType=VARCHAR},
+            </if>
+            <if test="monthlyIncome != null">
+                monthly_income = #{monthlyIncome,jdbcType=VARCHAR},
+            </if>
+            <if test="issueForm != null">
+                issue_form = #{issueForm,jdbcType=VARCHAR},
+            </if>
+            <if test="unitName != null">
+                unit_name = #{unitName,jdbcType=VARCHAR},
+            </if>
+            <if test="duty != null">
+                duty = #{duty,jdbcType=VARCHAR},
+            </if>
+            <if test="workHours != null">
+                work_hours = #{workHours,jdbcType=VARCHAR},
+            </if>
+            <if test="socialSecurity != null">
+                social_security = #{socialSecurity,jdbcType=VARCHAR},
+            </if>
+            <if test="publicGold != null">
+                public_gold = #{publicGold,jdbcType=VARCHAR},
+            </if>
+            <if test="cardinalNumber != null">
+                cardinal_number = #{cardinalNumber,jdbcType=VARCHAR},
+            </if>
+            <if test="business != null">
+                business = #{business,jdbcType=VARCHAR},
+            </if>
+            <if test="legalPerson != null">
+                legal_person = #{legalPerson,jdbcType=VARCHAR},
+            </if>
+            <if test="operationTime != null">
+                operation_time = #{operationTime,jdbcType=VARCHAR},
+            </if>
+            <if test="waterSituation != null">
+                water_situation = #{waterSituation,jdbcType=VARCHAR},
+            </if>
+            <if test="education != null">
+                education = #{education,jdbcType=VARCHAR},
+            </if>
+            <if test="sesamePoints != null">
+                sesame_points = #{sesamePoints,jdbcType=VARCHAR},
+            </if>
+            <if test="creditCard != null">
+                credit_card = #{creditCard,jdbcType=VARCHAR},
+            </if>
+            <if test="creditLimit != null">
+                credit_limit = #{creditLimit,jdbcType=VARCHAR},
+            </if>
+            <if test="credit != null">
+                credit = #{credit,jdbcType=VARCHAR},
+            </if>
+            <if test="bankLoan != null">
+                bank_loan = #{bankLoan,jdbcType=VARCHAR},
+            </if>
+            <if test="bankLoanQi != null">
+                bank_loan_qi = #{bankLoanQi,jdbcType=VARCHAR},
+            </if>
+            <if test="bankLoanMonthlyPayments != null">
+                bank_loan_monthly_payments = #{bankLoanMonthlyPayments,jdbcType=VARCHAR},
+            </if>
+            <if test="sesameLoan != null">
+                sesame_loan = #{sesameLoan,jdbcType=VARCHAR},
+            </if>
+            <if test="sesameLoanQi != null">
+                sesame_loan_qi = #{sesameLoanQi,jdbcType=VARCHAR},
+            </if>
+            <if test="sesameLoanMonthlyPayments != null">
+                sesame_loan_monthly_payments = #{sesameLoanMonthlyPayments,jdbcType=VARCHAR},
+            </if>
+            <if test="atomLoan != null">
+                atom_loan = #{atomLoan,jdbcType=VARCHAR},
+            </if>
+            <if test="atomLoanQi != null">
+                atom_loan_qi = #{atomLoanQi,jdbcType=VARCHAR},
+            </if>
+            <if test="atomLoanMonthlyPayments != null">
+                atom_loan_monthly_payments = #{atomLoanMonthlyPayments,jdbcType=VARCHAR},
+            </if>
+            <if test="policyCircumstances != null">
+                policy_circumstances = #{policyCircumstances,jdbcType=VARCHAR},
+            </if>
+            <if test="insuranceCompany != null">
+                insurance_company = #{insuranceCompany,jdbcType=VARCHAR},
+            </if>
+            <if test="payAmount != null">
+                pay_amount = #{payAmount,jdbcType=VARCHAR},
+            </if>
+            <if test="paidIn != null">
+                paid_in = #{paidIn,jdbcType=VARCHAR},
+            </if>
+            <if test="other != null">
+                other = #{other,jdbcType=VARCHAR},
+            </if>
+            <if test="nameOfTheProperty != null">
+                name_of_the_property = #{nameOfTheProperty,jdbcType=VARCHAR},
+            </if>
+            <if test="area != null">
+                area = #{area,jdbcType=VARCHAR},
+            </if>
+            <if test="loansDeadline != null">
+                loans_deadline = #{loansDeadline,jdbcType=VARCHAR},
+            </if>
+            <if test="housesPayMoneyForMonth != null">
+                houses_pay_money_for_month = #{housesPayMoneyForMonth,jdbcType=VARCHAR},
+            </if>
+            <if test="nameOfTheCar != null">
+                name_of_the_car = #{nameOfTheCar,jdbcType=VARCHAR},
+            </if>
+            <if test="carMoney != null">
+                car_money = #{carMoney,jdbcType=VARCHAR},
+            </if>
+            <if test="carPayType != null">
+                car_pay_type = #{carPayType,jdbcType=VARCHAR},
+            </if>
+            <if test="carPayMoneyForMonth != null">
+                car_pay_money_for_month = #{carPayMoneyForMonth,jdbcType=VARCHAR},
+            </if>
+            <if test="maritalStatus != null">
+                marital_status = #{maritalStatus,jdbcType=VARCHAR},
+            </if>
+            <if test="familyKnow != null">
+                family_know = #{familyKnow,jdbcType=VARCHAR},
+            </if>
+            <if test="clientGrade != null">
+                client_grade = #{clientGrade,jdbcType=VARCHAR},
+            </if>
+            <if test="reviewSituation != null">
+                review_situation = #{reviewSituation,jdbcType=VARCHAR},
+            </if>
+        </set>
+        where id = #{id,jdbcType=BIGINT}
+    </update>
+    <update id="updateByPrimaryKey" parameterType="io.gh.modules.customer.entity.CustomerEntity">
+        update tb_customer
+        set del = #{del,jdbcType=BIT},
+        creater_time = #{createrTime,jdbcType=TIMESTAMP},
+        update_time = #{updateTime,jdbcType=TIMESTAMP},
+        upload_user = #{uploadUser,jdbcType=VARCHAR},
+        upload_time = #{uploadTime,jdbcType=TIMESTAMP},
+        download_user = #{downloadUser,jdbcType=VARCHAR},
+        download_time = #{downloadTime,jdbcType=TIMESTAMP},
+        date_time = #{dateTime,jdbcType=VARCHAR},
+        aliasname = #{aliasname,jdbcType=VARCHAR},
+        idcard = #{idcard,jdbcType=VARCHAR},
+        phone = #{phone,jdbcType=VARCHAR},
+        money = #{money,jdbcType=VARCHAR},
+        purpose = #{purpose,jdbcType=VARCHAR},
+        deadline = #{deadline,jdbcType=VARCHAR},
+        required_time = #{requiredTime,jdbcType=VARCHAR},
+        unit = #{unit,jdbcType=VARCHAR},
+        monthly_income = #{monthlyIncome,jdbcType=VARCHAR},
+        issue_form = #{issueForm,jdbcType=VARCHAR},
+        unit_name = #{unitName,jdbcType=VARCHAR},
+        duty = #{duty,jdbcType=VARCHAR},
+        work_hours = #{workHours,jdbcType=VARCHAR},
+        social_security = #{socialSecurity,jdbcType=VARCHAR},
+        public_gold = #{publicGold,jdbcType=VARCHAR},
+        cardinal_number = #{cardinalNumber,jdbcType=VARCHAR},
+        business = #{business,jdbcType=VARCHAR},
+        legal_person = #{legalPerson,jdbcType=VARCHAR},
+        operation_time = #{operationTime,jdbcType=VARCHAR},
+        water_situation = #{waterSituation,jdbcType=VARCHAR},
+        education = #{education,jdbcType=VARCHAR},
+        sesame_points = #{sesamePoints,jdbcType=VARCHAR},
+        credit_card = #{creditCard,jdbcType=VARCHAR},
+        credit_limit = #{creditLimit,jdbcType=VARCHAR},
+        credit = #{credit,jdbcType=VARCHAR},
+        bank_loan = #{bankLoan,jdbcType=VARCHAR},
+        bank_loan_qi = #{bankLoanQi,jdbcType=VARCHAR},
+        bank_loan_monthly_payments = #{bankLoanMonthlyPayments,jdbcType=VARCHAR},
+        sesame_loan = #{sesameLoan,jdbcType=VARCHAR},
+        sesame_loan_qi = #{sesameLoanQi,jdbcType=VARCHAR},
+        sesame_loan_monthly_payments = #{sesameLoanMonthlyPayments,jdbcType=VARCHAR},
+        atom_loan = #{atomLoan,jdbcType=VARCHAR},
+        atom_loan_qi = #{atomLoanQi,jdbcType=VARCHAR},
+        atom_loan_monthly_payments = #{atomLoanMonthlyPayments,jdbcType=VARCHAR},
+        policy_circumstances = #{policyCircumstances,jdbcType=VARCHAR},
+        insurance_company = #{insuranceCompany,jdbcType=VARCHAR},
+        pay_amount = #{payAmount,jdbcType=VARCHAR},
+        paid_in = #{paidIn,jdbcType=VARCHAR},
+        other = #{other,jdbcType=VARCHAR},
+        name_of_the_property = #{nameOfTheProperty,jdbcType=VARCHAR},
+        area = #{area,jdbcType=VARCHAR},
+        loans_deadline = #{loansDeadline,jdbcType=VARCHAR},
+        houses_pay_money_for_month = #{housesPayMoneyForMonth,jdbcType=VARCHAR},
+        name_of_the_car = #{nameOfTheCar,jdbcType=VARCHAR},
+        car_money = #{carMoney,jdbcType=VARCHAR},
+        car_pay_type = #{carPayType,jdbcType=VARCHAR},
+        car_pay_money_for_month = #{carPayMoneyForMonth,jdbcType=VARCHAR},
+        marital_status = #{maritalStatus,jdbcType=VARCHAR},
+        family_know = #{familyKnow,jdbcType=VARCHAR},
+        client_grade = #{clientGrade,jdbcType=VARCHAR},
+        review_situation = #{reviewSituation,jdbcType=VARCHAR}
+        where id = #{id,jdbcType=BIGINT}
+    </update>
+</mapper>

@@ -1,0 +1,703 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="io.gh.modules.customer.dao.Customer4ParentSysDao">
+    <select id="selectByIds" resultType="io.gh.modules.customer.entity.Customer4ParentSysEntity">
+        SELECT * FROM tb_customer WHERE `del`=0 AND id IN (
+        <foreach item="id" collection="array" separator=",">
+            #{id,jdbcType=BIGINT}
+        </foreach>
+        )
+    </select>
+
+    <select id="queryList" resultType="io.gh.modules.customer.entity.Customer4ParentSysEntity">
+        select * from tb_customer
+        <where>
+            <if test="phone != null and phone.trim() != ''">
+                and `phone` like concat('%',#{phone},'%')
+            </if>
+            <if test="aliasname != null and aliasname.trim() != ''">
+                and `aliasname` like concat('%',#{aliasname},'%')
+            </if>
+            <if test="true">
+                and `del`=0
+            </if>
+            <if test="customerIds != null">
+                AND `id` IN
+                <foreach collection="customerIds" item="id" close=")" open="(" separator=",">
+                    #{id,jdbcType=BIGINT}
+                </foreach>
+            </if>
+        </where>
+        <choose>
+            <when test="sidx != null and sidx.trim() != ''">
+                order by ${sidx} ${order}
+            </when>
+            <otherwise>
+                order by id desc
+            </otherwise>
+        </choose>
+        <if test="offset != null and limit != null">
+            limit #{offset}, #{limit}
+        </if>
+    </select>
+
+    <select id="queryTotal" resultType="int">
+        select count(*) from tb_customer
+        <where>
+            <if test="phone != null and phone.trim() != ''">
+                and `phone` like concat('%',#{phone},'%')
+            </if>
+            <if test="aliasname != null and aliasname.trim() != ''">
+                and `aliasname` like concat('%',#{aliasname},'%')
+            </if>
+            <if test="true">
+                and `del`=0
+            </if>
+            <if test="customerIds != null">
+                AND `id` IN
+                <foreach collection="customerIds" item="id" close=")" open="(" separator=",">
+                    #{id,jdbcType=BIGINT}
+                </foreach>
+            </if>
+        </where>
+    </select>
+
+    <select id="selectByForeignKey" resultType="io.gh.modules.customer.entity.Customer4ParentSysEntity">
+        SELECT * FROM tb_customer WHERE `del` = 0 AND child_sys_customer_id = #{childSysCustomerId,jdbcType=BIGINT}
+    </select>
+
+    <update id="deleteBatch">
+        UPDATE tb_customer SET `del`=1 where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </update>
+
+    <insert id="insertBatch" useGeneratedKeys="true"
+            keyProperty="id">
+        INSERT INTO tb_customer (creater_time,
+        update_time, upload_user, upload_time, download_user, download_time,
+        date_time, aliasname, idcard,
+        phone, money, purpose,
+        deadline, required_time, unit,
+        monthly_income, issue_form, unit_name,
+        duty, work_hours, social_security,
+        public_gold, cardinal_number, business,
+        legal_person, operation_time, water_situation,
+        education, sesame_points, credit_card,
+        credit_limit, credit, bank_loan,
+        bank_loan_qi, bank_loan_monthly_payments, sesame_loan,
+        sesame_loan_qi, sesame_loan_monthly_payments,
+        atom_loan, atom_loan_qi, atom_loan_monthly_payments,
+        policy_circumstances, insurance_company,
+        pay_amount, paid_in, other,
+        name_of_the_property, area, loans_deadline,
+        houses_pay_money_for_month, name_of_the_car, car_money,
+        car_pay_type, car_pay_money_for_month, marital_status,
+        family_know, client_grade, review_situation, child_sys_customer_id
+        ) VALUES
+        <foreach item="item" collection="list" separator=",">
+            (
+            #{item.createrTime,jdbcType=TIMESTAMP},
+            #{item.updateTime,jdbcType=TIMESTAMP}, #{item.uploadUser,jdbcType=VARCHAR},
+            #{item.uploadTime,jdbcType=TIMESTAMP},
+            #{item.downloadUser,jdbcType=VARCHAR}, #{item.downloadTime,jdbcType=TIMESTAMP},
+            #{item.dateTime,jdbcType=VARCHAR}, #{item.aliasname,jdbcType=VARCHAR}, #{item.idcard,jdbcType=VARCHAR},
+            #{item.phone,jdbcType=VARCHAR}, #{item.money,jdbcType=VARCHAR}, #{item.purpose,jdbcType=VARCHAR},
+            #{item.deadline,jdbcType=VARCHAR}, #{item.requiredTime,jdbcType=VARCHAR}, #{item.unit,jdbcType=VARCHAR},
+            #{item.monthlyIncome,jdbcType=VARCHAR}, #{item.issueForm,jdbcType=VARCHAR},
+            #{item.unitName,jdbcType=VARCHAR},
+            #{item.duty,jdbcType=VARCHAR}, #{item.workHours,jdbcType=VARCHAR}, #{item.socialSecurity,jdbcType=VARCHAR},
+            #{item.publicGold,jdbcType=VARCHAR}, #{item.cardinalNumber,jdbcType=VARCHAR},
+            #{item.business,jdbcType=VARCHAR},
+            #{item.legalPerson,jdbcType=VARCHAR}, #{item.operationTime,jdbcType=VARCHAR},
+            #{item.waterSituation,jdbcType=VARCHAR},
+            #{item.education,jdbcType=VARCHAR}, #{item.sesamePoints,jdbcType=VARCHAR},
+            #{item.creditCard,jdbcType=VARCHAR},
+            #{item.creditLimit,jdbcType=VARCHAR}, #{item.credit,jdbcType=VARCHAR}, #{item.bankLoan,jdbcType=VARCHAR},
+            #{item.bankLoanQi,jdbcType=VARCHAR}, #{item.bankLoanMonthlyPayments,jdbcType=VARCHAR},
+            #{item.sesameLoan,jdbcType=VARCHAR},
+            #{item.sesameLoanQi,jdbcType=VARCHAR}, #{item.sesameLoanMonthlyPayments,jdbcType=VARCHAR},
+            #{item.atomLoan,jdbcType=VARCHAR}, #{item.atomLoanQi,jdbcType=VARCHAR},
+            #{item.atomLoanMonthlyPayments,jdbcType=VARCHAR},
+            #{item.policyCircumstances,jdbcType=VARCHAR}, #{item.insuranceCompany,jdbcType=VARCHAR},
+            #{item.payAmount,jdbcType=VARCHAR}, #{item.paidIn,jdbcType=VARCHAR}, #{item.other,jdbcType=VARCHAR},
+            #{item.nameOfTheProperty,jdbcType=VARCHAR}, #{item.area,jdbcType=VARCHAR},
+            #{item.loansDeadline,jdbcType=VARCHAR},
+            #{item.housesPayMoneyForMonth,jdbcType=VARCHAR}, #{item.nameOfTheCar,jdbcType=VARCHAR},
+            #{item.carMoney,jdbcType=VARCHAR},
+            #{item.carPayType,jdbcType=VARCHAR}, #{item.carPayMoneyForMonth,jdbcType=VARCHAR},
+            #{item.maritalStatus,jdbcType=VARCHAR},
+            #{item.familyKnow,jdbcType=VARCHAR}, #{item.clientGrade,jdbcType=VARCHAR},
+            #{item.reviewSituation,jdbcType=VARCHAR}, #{item.childSysCustomerId,jdbcType=BIGINT}
+            )
+        </foreach>
+    </insert>
+
+    <!--批量更新 ByPrimaryKey (id)-->
+    <update id="updateBatchByPrimaryKeySelective" parameterType="java.util.List">
+        <foreach collection="list" item="item" index="index" open="" close="" separator=";">
+            update tb_customer
+            <set>
+                <if test="item.del != null">
+                    del = #{item.del,jdbcType=BIT},
+                </if>
+                <if test="item.createrTime != null">
+                    creater_time = #{item.createrTime,jdbcType=TIMESTAMP},
+                </if>
+                <if test="item.updateTime != null">
+                    update_time = #{item.updateTime,jdbcType=TIMESTAMP},
+                </if>
+                <if test="item.uploadUser != null">
+                    upload_user = #{item.uploadUser,jdbcType=VARCHAR},
+                </if>
+                <if test="item.uploadTime != null">
+                    upload_time = #{item.uploadTime,jdbcType=TIMESTAMP},
+                </if>
+                <if test="item.downloadUser != null">
+                    download_user = #{item.downloadUser,jdbcType=VARCHAR},
+                </if>
+                <if test="item.downloadTime != null">
+                    download_time = #{item.downloadTime,jdbcType=TIMESTAMP},
+                </if>
+                <if test="item.dateTime != null">
+                    date_time = #{item.dateTime,jdbcType=VARCHAR},
+                </if>
+                <if test="item.aliasname != null">
+                    aliasname = #{item.aliasname,jdbcType=VARCHAR},
+                </if>
+                <if test="item.idcard != null">
+                    idcard = #{item.idcard,jdbcType=VARCHAR},
+                </if>
+                <if test="item.phone != null">
+                    phone = #{item.phone,jdbcType=VARCHAR},
+                </if>
+                <if test="item.money != null">
+                    money = #{item.money,jdbcType=VARCHAR},
+                </if>
+                <if test="item.purpose != null">
+                    purpose = #{item.purpose,jdbcType=VARCHAR},
+                </if>
+                <if test="item.deadline != null">
+                    deadline = #{item.deadline,jdbcType=VARCHAR},
+                </if>
+                <if test="item.requiredTime != null">
+                    required_time = #{item.requiredTime,jdbcType=VARCHAR},
+                </if>
+                <if test="item.unit != null">
+                    unit = #{item.unit,jdbcType=VARCHAR},
+                </if>
+                <if test="item.monthlyIncome != null">
+                    monthly_income = #{item.monthlyIncome,jdbcType=VARCHAR},
+                </if>
+                <if test="item.issueForm != null">
+                    issue_form = #{item.issueForm,jdbcType=VARCHAR},
+                </if>
+                <if test="item.unitName != null">
+                    unit_name = #{item.unitName,jdbcType=VARCHAR},
+                </if>
+                <if test="item.duty != null">
+                    duty = #{item.duty,jdbcType=VARCHAR},
+                </if>
+                <if test="item.workHours != null">
+                    work_hours = #{item.workHours,jdbcType=VARCHAR},
+                </if>
+                <if test="item.socialSecurity != null">
+                    social_security = #{item.socialSecurity,jdbcType=VARCHAR},
+                </if>
+                <if test="item.publicGold != null">
+                    public_gold = #{item.publicGold,jdbcType=VARCHAR},
+                </if>
+                <if test="item.cardinalNumber != null">
+                    cardinal_number = #{item.cardinalNumber,jdbcType=VARCHAR},
+                </if>
+                <if test="item.business != null">
+                    business = #{item.business,jdbcType=VARCHAR},
+                </if>
+                <if test="item.legalPerson != null">
+                    legal_person = #{item.legalPerson,jdbcType=VARCHAR},
+                </if>
+                <if test="item.operationTime != null">
+                    operation_time = #{item.operationTime,jdbcType=VARCHAR},
+                </if>
+                <if test="item.waterSituation != null">
+                    water_situation = #{item.waterSituation,jdbcType=VARCHAR},
+                </if>
+                <if test="item.education != null">
+                    education = #{item.education,jdbcType=VARCHAR},
+                </if>
+                <if test="item.sesamePoints != null">
+                    sesame_points = #{item.sesamePoints,jdbcType=VARCHAR},
+                </if>
+                <if test="item.creditCard != null">
+                    credit_card = #{item.creditCard,jdbcType=VARCHAR},
+                </if>
+                <if test="item.creditLimit != null">
+                    credit_limit = #{item.creditLimit,jdbcType=VARCHAR},
+                </if>
+                <if test="item.credit != null">
+                    credit = #{item.credit,jdbcType=VARCHAR},
+                </if>
+                <if test="item.bankLoan != null">
+                    bank_loan = #{item.bankLoan,jdbcType=VARCHAR},
+                </if>
+                <if test="item.bankLoanQi != null">
+                    bank_loan_qi = #{item.bankLoanQi,jdbcType=VARCHAR},
+                </if>
+                <if test="item.bankLoanMonthlyPayments != null">
+                    bank_loan_monthly_payments = #{item.bankLoanMonthlyPayments,jdbcType=VARCHAR},
+                </if>
+                <if test="item.sesameLoan != null">
+                    sesame_loan = #{item.sesameLoan,jdbcType=VARCHAR},
+                </if>
+                <if test="item.sesameLoanQi != null">
+                    sesame_loan_qi = #{item.sesameLoanQi,jdbcType=VARCHAR},
+                </if>
+                <if test="item.sesameLoanMonthlyPayments != null">
+                    sesame_loan_monthly_payments = #{item.sesameLoanMonthlyPayments,jdbcType=VARCHAR},
+                </if>
+                <if test="item.atomLoan != null">
+                    atom_loan = #{item.atomLoan,jdbcType=VARCHAR},
+                </if>
+                <if test="item.atomLoanQi != null">
+                    atom_loan_qi = #{item.atomLoanQi,jdbcType=VARCHAR},
+                </if>
+                <if test="item.atomLoanMonthlyPayments != null">
+                    atom_loan_monthly_payments = #{item.atomLoanMonthlyPayments,jdbcType=VARCHAR},
+                </if>
+                <if test="item.policyCircumstances != null">
+                    policy_circumstances = #{item.policyCircumstances,jdbcType=VARCHAR},
+                </if>
+                <if test="item.insuranceCompany != null">
+                    insurance_company = #{item.insuranceCompany,jdbcType=VARCHAR},
+                </if>
+                <if test="item.payAmount != null">
+                    pay_amount = #{item.payAmount,jdbcType=VARCHAR},
+                </if>
+                <if test="item.paidIn != null">
+                    paid_in = #{item.paidIn,jdbcType=VARCHAR},
+                </if>
+                <if test="item.other != null">
+                    other = #{item.other,jdbcType=VARCHAR},
+                </if>
+                <if test="item.nameOfTheProperty != null">
+                    name_of_the_property = #{item.nameOfTheProperty,jdbcType=VARCHAR},
+                </if>
+                <if test="item.area != null">
+                    area = #{item.area,jdbcType=VARCHAR},
+                </if>
+                <if test="item.loansDeadline != null">
+                    loans_deadline = #{item.loansDeadline,jdbcType=VARCHAR},
+                </if>
+                <if test="item.housesPayMoneyForMonth != null">
+                    houses_pay_money_for_month = #{item.housesPayMoneyForMonth,jdbcType=VARCHAR},
+                </if>
+                <if test="item.nameOfTheCar != null">
+                    name_of_the_car = #{item.nameOfTheCar,jdbcType=VARCHAR},
+                </if>
+                <if test="item.carMoney != null">
+                    car_money = #{item.carMoney,jdbcType=VARCHAR},
+                </if>
+                <if test="item.carPayType != null">
+                    car_pay_type = #{item.item.carPayType,jdbcType=VARCHAR},
+                </if>
+                <if test="item.carPayMoneyForMonth != null">
+                    car_pay_money_for_month = #{item.carPayMoneyForMonth,jdbcType=VARCHAR},
+                </if>
+                <if test="item.maritalStatus != null">
+                    marital_status = #{item.maritalStatus,jdbcType=VARCHAR},
+                </if>
+                <if test="item.familyKnow != null">
+                    family_know = #{item.familyKnow,jdbcType=VARCHAR},
+                </if>
+                <if test="item.clientGrade != null">
+                    client_grade = #{item.clientGrade,jdbcType=VARCHAR},
+                </if>
+                <if test="item.reviewSituation != null">
+                    review_situation = #{item.reviewSituation,jdbcType=VARCHAR},
+                </if>
+                <if test="item.childSysCustomerId != null">
+                    child_sys_customer_id = #{item.childSysCustomerId,jdbcType=BIGINT},
+                </if>
+            </set>
+            where id = #{item.id,jdbcType=BIGINT}
+        </foreach>
+    </update>
+
+    <!--批量更新 ByForeignKey (child_sys_customer_id)-->
+    <update id="updateBatchByForeignKeySelective" parameterType="java.util.List">
+        <foreach collection="list" item="item" index="index" open="" close="" separator=";">
+            update tb_customer
+            <set>
+                <if test="item.del != null">
+                    del = #{item.del,jdbcType=BIT},
+                </if>
+                <if test="item.createrTime != null">
+                    creater_time = #{item.createrTime,jdbcType=TIMESTAMP},
+                </if>
+                <if test="item.updateTime != null">
+                    update_time = #{item.updateTime,jdbcType=TIMESTAMP},
+                </if>
+                <if test="item.uploadUser != null">
+                    upload_user = #{item.uploadUser,jdbcType=VARCHAR},
+                </if>
+                <if test="item.uploadTime != null">
+                    upload_time = #{item.uploadTime,jdbcType=TIMESTAMP},
+                </if>
+                <if test="item.downloadUser != null">
+                    download_user = #{item.downloadUser,jdbcType=VARCHAR},
+                </if>
+                <if test="item.downloadTime != null">
+                    download_time = #{item.downloadTime,jdbcType=TIMESTAMP},
+                </if>
+                <if test="item.dateTime != null">
+                    date_time = #{item.dateTime,jdbcType=VARCHAR},
+                </if>
+                <if test="item.aliasname != null">
+                    aliasname = #{item.aliasname,jdbcType=VARCHAR},
+                </if>
+                <if test="item.idcard != null">
+                    idcard = #{item.idcard,jdbcType=VARCHAR},
+                </if>
+                <if test="item.phone != null">
+                    phone = #{item.phone,jdbcType=VARCHAR},
+                </if>
+                <if test="item.money != null">
+                    money = #{item.money,jdbcType=VARCHAR},
+                </if>
+                <if test="item.purpose != null">
+                    purpose = #{item.purpose,jdbcType=VARCHAR},
+                </if>
+                <if test="item.deadline != null">
+                    deadline = #{item.deadline,jdbcType=VARCHAR},
+                </if>
+                <if test="item.requiredTime != null">
+                    required_time = #{item.requiredTime,jdbcType=VARCHAR},
+                </if>
+                <if test="item.unit != null">
+                    unit = #{item.unit,jdbcType=VARCHAR},
+                </if>
+                <if test="item.monthlyIncome != null">
+                    monthly_income = #{item.monthlyIncome,jdbcType=VARCHAR},
+                </if>
+                <if test="item.issueForm != null">
+                    issue_form = #{item.issueForm,jdbcType=VARCHAR},
+                </if>
+                <if test="item.unitName != null">
+                    unit_name = #{item.unitName,jdbcType=VARCHAR},
+                </if>
+                <if test="item.duty != null">
+                    duty = #{item.duty,jdbcType=VARCHAR},
+                </if>
+                <if test="item.workHours != null">
+                    work_hours = #{item.workHours,jdbcType=VARCHAR},
+                </if>
+                <if test="item.socialSecurity != null">
+                    social_security = #{item.socialSecurity,jdbcType=VARCHAR},
+                </if>
+                <if test="item.publicGold != null">
+                    public_gold = #{item.publicGold,jdbcType=VARCHAR},
+                </if>
+                <if test="item.cardinalNumber != null">
+                    cardinal_number = #{item.cardinalNumber,jdbcType=VARCHAR},
+                </if>
+                <if test="item.business != null">
+                    business = #{item.business,jdbcType=VARCHAR},
+                </if>
+                <if test="item.legalPerson != null">
+                    legal_person = #{item.legalPerson,jdbcType=VARCHAR},
+                </if>
+                <if test="item.operationTime != null">
+                    operation_time = #{item.operationTime,jdbcType=VARCHAR},
+                </if>
+                <if test="item.waterSituation != null">
+                    water_situation = #{item.waterSituation,jdbcType=VARCHAR},
+                </if>
+                <if test="item.education != null">
+                    education = #{item.education,jdbcType=VARCHAR},
+                </if>
+                <if test="item.sesamePoints != null">
+                    sesame_points = #{item.sesamePoints,jdbcType=VARCHAR},
+                </if>
+                <if test="item.creditCard != null">
+                    credit_card = #{item.creditCard,jdbcType=VARCHAR},
+                </if>
+                <if test="item.creditLimit != null">
+                    credit_limit = #{item.creditLimit,jdbcType=VARCHAR},
+                </if>
+                <if test="item.credit != null">
+                    credit = #{item.credit,jdbcType=VARCHAR},
+                </if>
+                <if test="item.bankLoan != null">
+                    bank_loan = #{item.bankLoan,jdbcType=VARCHAR},
+                </if>
+                <if test="item.bankLoanQi != null">
+                    bank_loan_qi = #{item.bankLoanQi,jdbcType=VARCHAR},
+                </if>
+                <if test="item.bankLoanMonthlyPayments != null">
+                    bank_loan_monthly_payments = #{item.bankLoanMonthlyPayments,jdbcType=VARCHAR},
+                </if>
+                <if test="item.sesameLoan != null">
+                    sesame_loan = #{item.sesameLoan,jdbcType=VARCHAR},
+                </if>
+                <if test="item.sesameLoanQi != null">
+                    sesame_loan_qi = #{item.sesameLoanQi,jdbcType=VARCHAR},
+                </if>
+                <if test="item.sesameLoanMonthlyPayments != null">
+                    sesame_loan_monthly_payments = #{item.sesameLoanMonthlyPayments,jdbcType=VARCHAR},
+                </if>
+                <if test="item.atomLoan != null">
+                    atom_loan = #{item.atomLoan,jdbcType=VARCHAR},
+                </if>
+                <if test="item.atomLoanQi != null">
+                    atom_loan_qi = #{item.atomLoanQi,jdbcType=VARCHAR},
+                </if>
+                <if test="item.atomLoanMonthlyPayments != null">
+                    atom_loan_monthly_payments = #{item.atomLoanMonthlyPayments,jdbcType=VARCHAR},
+                </if>
+                <if test="item.policyCircumstances != null">
+                    policy_circumstances = #{item.policyCircumstances,jdbcType=VARCHAR},
+                </if>
+                <if test="item.insuranceCompany != null">
+                    insurance_company = #{item.insuranceCompany,jdbcType=VARCHAR},
+                </if>
+                <if test="item.payAmount != null">
+                    pay_amount = #{item.payAmount,jdbcType=VARCHAR},
+                </if>
+                <if test="item.paidIn != null">
+                    paid_in = #{item.paidIn,jdbcType=VARCHAR},
+                </if>
+                <if test="item.other != null">
+                    other = #{item.other,jdbcType=VARCHAR},
+                </if>
+                <if test="item.nameOfTheProperty != null">
+                    name_of_the_property = #{item.nameOfTheProperty,jdbcType=VARCHAR},
+                </if>
+                <if test="item.area != null">
+                    area = #{item.area,jdbcType=VARCHAR},
+                </if>
+                <if test="item.loansDeadline != null">
+                    loans_deadline = #{item.loansDeadline,jdbcType=VARCHAR},
+                </if>
+                <if test="item.housesPayMoneyForMonth != null">
+                    houses_pay_money_for_month = #{item.housesPayMoneyForMonth,jdbcType=VARCHAR},
+                </if>
+                <if test="item.nameOfTheCar != null">
+                    name_of_the_car = #{item.nameOfTheCar,jdbcType=VARCHAR},
+                </if>
+                <if test="item.carMoney != null">
+                    car_money = #{item.carMoney,jdbcType=VARCHAR},
+                </if>
+                <if test="item.carPayType != null">
+                    car_pay_type = #{item.item.carPayType,jdbcType=VARCHAR},
+                </if>
+                <if test="item.carPayMoneyForMonth != null">
+                    car_pay_money_for_month = #{item.carPayMoneyForMonth,jdbcType=VARCHAR},
+                </if>
+                <if test="item.maritalStatus != null">
+                    marital_status = #{item.maritalStatus,jdbcType=VARCHAR},
+                </if>
+                <if test="item.familyKnow != null">
+                    family_know = #{item.familyKnow,jdbcType=VARCHAR},
+                </if>
+                <if test="item.clientGrade != null">
+                    client_grade = #{item.clientGrade,jdbcType=VARCHAR},
+                </if>
+                <if test="item.reviewSituation != null">
+                    review_situation = #{item.reviewSituation,jdbcType=VARCHAR},
+                </if>
+            </set>
+            where child_sys_customer_id = #{item.childSysCustomerId,jdbcType=BIGINT}
+        </foreach>
+    </update>
+
+    <update id="updateByForeignKeySelective" parameterType="io.gh.modules.customer.entity.Customer4ParentSysEntity">
+        update tb_customer
+        <set>
+            <if test="del != null">
+                del = #{del,jdbcType=BIT},
+            </if>
+            <if test="createrTime != null">
+                creater_time = #{createrTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updateTime != null">
+                update_time = #{updateTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="uploadUser != null">
+                upload_user = #{uploadUser,jdbcType=VARCHAR},
+            </if>
+            <if test="uploadTime != null">
+                upload_time = #{uploadTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="downloadUser != null">
+                download_user = #{downloadUser,jdbcType=VARCHAR},
+            </if>
+            <if test="downloadTime != null">
+                download_time = #{downloadTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="dateTime != null">
+                date_time = #{dateTime,jdbcType=VARCHAR},
+            </if>
+            <if test="aliasname != null">
+                aliasname = #{aliasname,jdbcType=VARCHAR},
+            </if>
+            <if test="idcard != null">
+                idcard = #{idcard,jdbcType=VARCHAR},
+            </if>
+            <if test="phone != null">
+                phone = #{phone,jdbcType=VARCHAR},
+            </if>
+            <if test="money != null">
+                money = #{money,jdbcType=VARCHAR},
+            </if>
+            <if test="purpose != null">
+                purpose = #{purpose,jdbcType=VARCHAR},
+            </if>
+            <if test="deadline != null">
+                deadline = #{deadline,jdbcType=VARCHAR},
+            </if>
+            <if test="requiredTime != null">
+                required_time = #{requiredTime,jdbcType=VARCHAR},
+            </if>
+            <if test="unit != null">
+                unit = #{unit,jdbcType=VARCHAR},
+            </if>
+            <if test="monthlyIncome != null">
+                monthly_income = #{monthlyIncome,jdbcType=VARCHAR},
+            </if>
+            <if test="issueForm != null">
+                issue_form = #{issueForm,jdbcType=VARCHAR},
+            </if>
+            <if test="unitName != null">
+                unit_name = #{unitName,jdbcType=VARCHAR},
+            </if>
+            <if test="duty != null">
+                duty = #{duty,jdbcType=VARCHAR},
+            </if>
+            <if test="workHours != null">
+                work_hours = #{workHours,jdbcType=VARCHAR},
+            </if>
+            <if test="socialSecurity != null">
+                social_security = #{socialSecurity,jdbcType=VARCHAR},
+            </if>
+            <if test="publicGold != null">
+                public_gold = #{publicGold,jdbcType=VARCHAR},
+            </if>
+            <if test="cardinalNumber != null">
+                cardinal_number = #{cardinalNumber,jdbcType=VARCHAR},
+            </if>
+            <if test="business != null">
+                business = #{business,jdbcType=VARCHAR},
+            </if>
+            <if test="legalPerson != null">
+                legal_person = #{legalPerson,jdbcType=VARCHAR},
+            </if>
+            <if test="operationTime != null">
+                operation_time = #{operationTime,jdbcType=VARCHAR},
+            </if>
+            <if test="waterSituation != null">
+                water_situation = #{waterSituation,jdbcType=VARCHAR},
+            </if>
+            <if test="education != null">
+                education = #{education,jdbcType=VARCHAR},
+            </if>
+            <if test="sesamePoints != null">
+                sesame_points = #{sesamePoints,jdbcType=VARCHAR},
+            </if>
+            <if test="creditCard != null">
+                credit_card = #{creditCard,jdbcType=VARCHAR},
+            </if>
+            <if test="creditLimit != null">
+                credit_limit = #{creditLimit,jdbcType=VARCHAR},
+            </if>
+            <if test="credit != null">
+                credit = #{credit,jdbcType=VARCHAR},
+            </if>
+            <if test="bankLoan != null">
+                bank_loan = #{bankLoan,jdbcType=VARCHAR},
+            </if>
+            <if test="bankLoanQi != null">
+                bank_loan_qi = #{bankLoanQi,jdbcType=VARCHAR},
+            </if>
+            <if test="bankLoanMonthlyPayments != null">
+                bank_loan_monthly_payments = #{bankLoanMonthlyPayments,jdbcType=VARCHAR},
+            </if>
+            <if test="sesameLoan != null">
+                sesame_loan = #{sesameLoan,jdbcType=VARCHAR},
+            </if>
+            <if test="sesameLoanQi != null">
+                sesame_loan_qi = #{sesameLoanQi,jdbcType=VARCHAR},
+            </if>
+            <if test="sesameLoanMonthlyPayments != null">
+                sesame_loan_monthly_payments = #{sesameLoanMonthlyPayments,jdbcType=VARCHAR},
+            </if>
+            <if test="atomLoan != null">
+                atom_loan = #{atomLoan,jdbcType=VARCHAR},
+            </if>
+            <if test="atomLoanQi != null">
+                atom_loan_qi = #{atomLoanQi,jdbcType=VARCHAR},
+            </if>
+            <if test="atomLoanMonthlyPayments != null">
+                atom_loan_monthly_payments = #{atomLoanMonthlyPayments,jdbcType=VARCHAR},
+            </if>
+            <if test="policyCircumstances != null">
+                policy_circumstances = #{policyCircumstances,jdbcType=VARCHAR},
+            </if>
+            <if test="insuranceCompany != null">
+                insurance_company = #{insuranceCompany,jdbcType=VARCHAR},
+            </if>
+            <if test="payAmount != null">
+                pay_amount = #{payAmount,jdbcType=VARCHAR},
+            </if>
+            <if test="paidIn != null">
+                paid_in = #{paidIn,jdbcType=VARCHAR},
+            </if>
+            <if test="other != null">
+                other = #{other,jdbcType=VARCHAR},
+            </if>
+            <if test="nameOfTheProperty != null">
+                name_of_the_property = #{nameOfTheProperty,jdbcType=VARCHAR},
+            </if>
+            <if test="area != null">
+                area = #{area,jdbcType=VARCHAR},
+            </if>
+            <if test="loansDeadline != null">
+                loans_deadline = #{loansDeadline,jdbcType=VARCHAR},
+            </if>
+            <if test="housesPayMoneyForMonth != null">
+                houses_pay_money_for_month = #{housesPayMoneyForMonth,jdbcType=VARCHAR},
+            </if>
+            <if test="nameOfTheCar != null">
+                name_of_the_car = #{nameOfTheCar,jdbcType=VARCHAR},
+            </if>
+            <if test="carMoney != null">
+                car_money = #{carMoney,jdbcType=VARCHAR},
+            </if>
+            <if test="carPayType != null">
+                car_pay_type = #{carPayType,jdbcType=VARCHAR},
+            </if>
+            <if test="carPayMoneyForMonth != null">
+                car_pay_money_for_month = #{carPayMoneyForMonth,jdbcType=VARCHAR},
+            </if>
+            <if test="maritalStatus != null">
+                marital_status = #{maritalStatus,jdbcType=VARCHAR},
+            </if>
+            <if test="familyKnow != null">
+                family_know = #{familyKnow,jdbcType=VARCHAR},
+            </if>
+            <if test="clientGrade != null">
+                client_grade = #{clientGrade,jdbcType=VARCHAR},
+            </if>
+            <if test="reviewSituation != null">
+                review_situation = #{reviewSituation,jdbcType=VARCHAR},
+            </if>
+        </set>
+        where child_sys_customer_id = #{childSysCustomerId,jdbcType=BIGINT}
+    </update>
+
+    <!--查询某个时间 大于 修改时间+7天-->
+    <select id="selectByGTUpdateTime" parameterType="java.util.Date" resultMap="BaseResultMap">
+        SELECT * FROM tb_customer WHERE `del`=0 AND update_time &lt; #{ut}
+    </select>
+
+</mapper>

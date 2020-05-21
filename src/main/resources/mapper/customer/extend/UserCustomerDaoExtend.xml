@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="io.gh.modules.customer.dao.UserCustomerDao">
+
+    <insert id="insertBatch" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO tb_user_customer (user_id, customer_id) VALUES
+        <foreach item="item" collection="list" separator=",">
+            (#{item.userId,jdbcType=BIGINT}, #{item.customerId,jdbcType=BIGINT})
+        </foreach>
+    </insert>
+
+    <delete id="deleteBatchByCustomerIds">
+        DELETE FROM tb_user_customer where customer_id in
+        <foreach item="customerId" collection="array" open="(" separator="," close=")">
+            #{customerId,jdbcType=BIGINT}
+        </foreach>
+    </delete>
+
+    <select id="selectByEntity" resultMap="BaseResultMap"
+            parameterType="io.gh.modules.customer.entity.UserCustomerEntity">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM tb_user_customer
+        <where>
+            <if test="userId != null">
+                AND user_id = #{userId,jdbcType=BIGINT}
+            </if>
+            <if test="customerId != null">
+                AND customer_id = #{customerId,jdbcType=BIGINT}
+            </if>
+        </where>
+    </select>
+
+    <delete id="deleteBatchByEntitys" parameterType="java.util.List">
+        <foreach collection="list" item="userCustomer" separator=";">
+            <if test="userCustomer.userId != null || userCustomer.customerId != null">
+                DELETE FROM tb_user_customer
+                <where>
+                    <if test="userCustomer.userId != null">
+                        AND `user_id` = #{userCustomer.userId,jdbcType=BIGINT}
+                    </if>
+                    <if test="userCustomer.customerId != null">
+                        AND `customer_id` = #{userCustomer.customerId,jdbcType=BIGINT}
+                    </if>
+                </where>
+
+            </if>
+        </foreach>
+    </delete>
+
+</mapper>
